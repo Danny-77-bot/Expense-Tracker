@@ -57,25 +57,13 @@
 
     <!-- Transaction List -->
 
-    <section class="transactions">
+<!-- Transaction List -->
 
-        <h2>Transactions</h2>
-
-        <ul>
-
-            <li>No transactions yet.</li>
-
-        </ul>
-
-    </section>
-
-    <!-- Add Transaction -->
-
-  <section class="transactions">
+<section class="transactions">
 
     <h2>Transaction History</h2>
 
-    <ul>
+    <ul id="transaction-list">
 
         <li class="empty">
 
@@ -85,8 +73,49 @@
 
     </ul>
 
-</section>  
+</section>
 
+<!-- Add Transaction -->
+
+<section class="form-section">
+
+    <h2>Add Transaction</h2>
+
+    <form id="transaction-form">
+
+        <input
+            type="text"
+            id="description"
+            placeholder="Transaction Name"
+            required>
+
+        <input
+            type="number"
+            id="amount"
+            placeholder="Amount"
+            required>
+
+        <select id="type">
+
+            <option value="income">
+                Income
+            </option>
+
+            <option value="expense">
+                Expense
+            </option>
+
+        </select>
+
+        <button type="submit">
+
+            Add Transaction
+
+        </button>
+
+    </form>
+
+</section>
     <script src="script.js"></script>
 
 </body>
