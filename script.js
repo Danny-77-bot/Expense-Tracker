@@ -1,8 +1,8 @@
 /* =========================
-   STEP 3 - ADD TRANSACTIONS
+   STEP 4 - EXPENSE TRACKER
 ========================= */
 
-// Get HTML elements
+// Form Elements
 
 const form = document.getElementById("transaction-form");
 
@@ -14,73 +14,115 @@ const type = document.getElementById("type");
 
 const transactionList = document.getElementById("transaction-list");
 
-// When the form is submitted
+// Summary Cards
 
-form.addEventListener("submit", function(event){
+const balance = document.getElementById("balance");
 
-    // Prevent page refresh
+const income = document.getElementById("income");
+
+const expense = document.getElementById("expense");
+
+// Store all transactions
+
+const transactions = [];
+
+// Update Summary
+
+function updateSummary(){
+
+    let totalIncome = 0;
+
+    let totalExpense = 0;
+
+    transactions.forEach(transaction=>{
+
+        if(transaction.type==="income"){
+
+            totalIncome += transaction.amount;
+
+        }else{
+
+            totalExpense += transaction.amount;
+
+        }
+
+    });
+
+    const totalBalance = totalIncome - totalExpense;
+
+    income.textContent = "+$" + totalIncome.toFixed(2);
+
+    expense.textContent = "-$" + totalExpense.toFixed(2);
+
+    balance.textContent = "$" + totalBalance.toFixed(2);
+
+}
+
+// Add Transaction
+
+form.addEventListener("submit",function(event){
 
     event.preventDefault();
 
-    // Get values from the form
-
     const descriptionValue = description.value.trim();
 
-    const amountValue = amount.value;
+    const amountValue = Number(amount.value);
 
     const typeValue = type.value;
 
-    // Check if fields are empty
+    if(descriptionValue==="" || amountValue<=0){
 
-    if(descriptionValue === "" || amountValue === ""){
-
-        alert("Please fill in all fields.");
+        alert("Please enter valid information.");
 
         return;
 
     }
 
-    // Remove the "No transactions available" message
+    const empty = document.querySelector(".empty");
 
-    const emptyMessage = document.querySelector(".empty");
+    if(empty){
 
-    if(emptyMessage){
-
-        emptyMessage.remove();
+        empty.remove();
 
     }
 
-    // Create a new list item
+    // Save transaction
 
-    const transaction = document.createElement("li");
+    transactions.push({
 
-    // Add transaction content
+        description:descriptionValue,
 
-    if(typeValue === "income"){
+        amount:amountValue,
 
-        transaction.innerHTML = `
+        type:typeValue
+
+    });
+
+    const li = document.createElement("li");
+
+    if(typeValue==="income"){
+
+        li.innerHTML = `
             <strong>${descriptionValue}</strong>
-            <span style="float:right; color:green;">
-                +$${amountValue}
+            <span style="float:right;color:green;">
+                +$${amountValue.toFixed(2)}
             </span>
         `;
 
     }else{
 
-        transaction.innerHTML = `
+        li.innerHTML = `
             <strong>${descriptionValue}</strong>
-            <span style="float:right; color:red;">
-                -$${amountValue}
+            <span style="float:right;color:red;">
+                -$${amountValue.toFixed(2)}
             </span>
         `;
 
     }
 
-    // Add the transaction to the list
+    transactionList.appendChild(li);
 
-    transactionList.appendChild(transaction);
-
-    // Clear the form
+    updateSummary();
 
     form.reset();
 
