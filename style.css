@@ -1,4 +1,6 @@
-/* RESET */
+/* =========================
+   RESET
+========================= */
 
 *{
 
@@ -8,21 +10,35 @@
 
     box-sizing:border-box;
 
-    font-family:Arial,sans-serif;
+    font-family:"Segoe UI",sans-serif;
 
 }
 
 body{
 
-    background:#f4f4f4;
+    background:#eef2f7;
 
-    color:#333;
+    color:#1f2937;
 
-    padding:20px;
+    padding:40px 20px;
 
 }
 
-/* HEADER */
+/* =========================
+   CONTAINER
+========================= */
+
+body{
+
+    max-width:900px;
+
+    margin:auto;
+
+}
+
+/* =========================
+   HEADER
+========================= */
 
 header{
 
@@ -36,17 +52,27 @@ header h1{
 
     color:#2563eb;
 
+    font-size:42px;
+
     margin-bottom:10px;
 
 }
 
-/* SUMMARY */
+header p{
+
+    color:#6b7280;
+
+}
+
+/* =========================
+   SUMMARY
+========================= */
 
 .summary{
 
     display:grid;
 
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 
     gap:20px;
 
@@ -58,21 +84,63 @@ header h1{
 
     background:white;
 
-    padding:20px;
+    padding:25px;
 
-    border-radius:10px;
+    border-radius:15px;
 
     text-align:center;
 
-    box-shadow:0 5px 15px rgba(0,0,0,.1);
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
 
 }
 
-/* TRANSACTIONS */
+.card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.balance{
+
+    border-top:5px solid #2563eb;
+
+}
+
+.income{
+
+    border-top:5px solid #16a34a;
+
+}
+
+.expense{
+
+    border-top:5px solid #dc2626;
+
+}
+
+/* =========================
+   TRANSACTIONS
+========================= */
 
 .transactions{
 
+    background:white;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
     margin-bottom:40px;
+
+}
+
+.transactions h2{
+
+    margin-bottom:20px;
 
 }
 
@@ -84,17 +152,41 @@ header h1{
 
 .transactions li{
 
-    background:white;
-
     padding:15px;
 
-    margin-top:10px;
-
-    border-radius:8px;
+    border-bottom:1px solid #e5e7eb;
 
 }
 
-/* FORM */
+.empty{
+
+    text-align:center;
+
+    color:#9ca3af;
+
+}
+
+/* =========================
+   FORM
+========================= */
+
+.form-section{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.form-section h2{
+
+    margin-bottom:20px;
+
+}
 
 .form-section form{
 
@@ -107,16 +199,30 @@ header h1{
 }
 
 input,
-select,
-button{
+select{
 
-    padding:12px;
+    padding:14px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:10px;
 
     font-size:16px;
+
+    outline:none;
+
+}
+
+input:focus,
+select:focus{
+
+    border-color:#2563eb;
 
 }
 
 button{
+
+    padding:15px;
 
     background:#2563eb;
 
@@ -124,7 +230,13 @@ button{
 
     border:none;
 
+    border-radius:10px;
+
     cursor:pointer;
+
+    font-size:16px;
+
+    transition:.3s;
 
 }
 
@@ -134,13 +246,15 @@ button:hover{
 
 }
 
-/* RESPONSIVE */
+/* =========================
+   RESPONSIVE
+========================= */
 
 @media(max-width:768px){
 
-    .summary{
+    body{
 
-        grid-template-columns:1fr;
+        padding:20px;
 
     }
 
