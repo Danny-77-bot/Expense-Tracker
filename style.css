@@ -1,0 +1,147 @@
+/* RESET */
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+    font-family:Arial,sans-serif;
+
+}
+
+body{
+
+    background:#f4f4f4;
+
+    color:#333;
+
+    padding:20px;
+
+}
+
+/* HEADER */
+
+header{
+
+    text-align:center;
+
+    margin-bottom:40px;
+
+}
+
+header h1{
+
+    color:#2563eb;
+
+    margin-bottom:10px;
+
+}
+
+/* SUMMARY */
+
+.summary{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:20px;
+
+    margin-bottom:40px;
+
+}
+
+.card{
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:10px;
+
+    text-align:center;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+
+}
+
+/* TRANSACTIONS */
+
+.transactions{
+
+    margin-bottom:40px;
+
+}
+
+.transactions ul{
+
+    list-style:none;
+
+}
+
+.transactions li{
+
+    background:white;
+
+    padding:15px;
+
+    margin-top:10px;
+
+    border-radius:8px;
+
+}
+
+/* FORM */
+
+.form-section form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+input,
+select,
+button{
+
+    padding:12px;
+
+    font-size:16px;
+
+}
+
+button{
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    cursor:pointer;
+
+}
+
+button:hover{
+
+    background:#1d4ed8;
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+    .summary{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
