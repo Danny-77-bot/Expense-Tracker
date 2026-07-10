@@ -1,5 +1,5 @@
 /* =========================
-   STEP 4 - EXPENSE TRACKER
+   STEP 5 - DELETE TRANSACTIONS
 ========================= */
 
 // Form Elements
@@ -22,11 +22,13 @@ const income = document.getElementById("income");
 
 const expense = document.getElementById("expense");
 
-// Store all transactions
+// Store Transactions
 
 const transactions = [];
 
+// =========================
 // Update Summary
+// =========================
 
 function updateSummary(){
 
@@ -34,9 +36,9 @@ function updateSummary(){
 
     let totalExpense = 0;
 
-    transactions.forEach(transaction=>{
+    transactions.forEach(transaction => {
 
-        if(transaction.type==="income"){
+        if(transaction.type === "income"){
 
             totalIncome += transaction.amount;
 
@@ -48,19 +50,43 @@ function updateSummary(){
 
     });
 
-    const totalBalance = totalIncome - totalExpense;
+    balance.textContent = "$" + (totalIncome - totalExpense).toFixed(2);
 
     income.textContent = "+$" + totalIncome.toFixed(2);
 
     expense.textContent = "-$" + totalExpense.toFixed(2);
 
-    balance.textContent = "$" + totalBalance.toFixed(2);
+}
+
+// =========================
+// Delete Transaction
+// =========================
+
+function deleteTransaction(index, listItem){
+
+    transactions.splice(index, 1);
+
+    listItem.remove();
+
+    if(transactions.length === 0){
+
+        transactionList.innerHTML = `
+            <li class="empty">
+                No transactions available.
+            </li>
+        `;
+
+    }
+
+    updateSummary();
 
 }
 
+// =========================
 // Add Transaction
+// =========================
 
-form.addEventListener("submit",function(event){
+form.addEventListener("submit", function(event){
 
     event.preventDefault();
 
@@ -70,7 +96,7 @@ form.addEventListener("submit",function(event){
 
     const typeValue = type.value;
 
-    if(descriptionValue==="" || amountValue<=0){
+    if(descriptionValue === "" || amountValue <= 0){
 
         alert("Please enter valid information.");
 
@@ -86,39 +112,48 @@ form.addEventListener("submit",function(event){
 
     }
 
-    // Save transaction
+    const transaction = {
 
-    transactions.push({
+        description: descriptionValue,
 
-        description:descriptionValue,
+        amount: amountValue,
 
-        amount:amountValue,
+        type: typeValue
 
-        type:typeValue
+    };
 
-    });
+    transactions.push(transaction);
+
+    const index = transactions.length - 1;
 
     const li = document.createElement("li");
 
-    if(typeValue==="income"){
+    li.style.display = "flex";
 
-        li.innerHTML = `
-            <strong>${descriptionValue}</strong>
-            <span style="float:right;color:green;">
-                +$${amountValue.toFixed(2)}
+    li.style.justifyContent = "space-between";
+
+    li.style.alignItems = "center";
+
+    li.innerHTML = `
+        <div>
+            <strong>${descriptionValue}</strong><br>
+            <span style="color:${typeValue==="income" ? "green" : "red"}">
+                ${typeValue==="income" ? "+" : "-"}$${amountValue.toFixed(2)}
             </span>
-        `;
+        </div>
 
-    }else{
+        <button class="delete-btn">
+            Delete
+        </button>
+    `;
 
-        li.innerHTML = `
-            <strong>${descriptionValue}</strong>
-            <span style="float:right;color:red;">
-                -$${amountValue.toFixed(2)}
-            </span>
-        `;
+    const deleteButton = li.querySelector(".delete-btn");
 
-    }
+    deleteButton.addEventListener("click", function(){
+
+        deleteTransaction(index, li);
+
+    });
 
     transactionList.appendChild(li);
 

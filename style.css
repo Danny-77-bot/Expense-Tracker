@@ -259,3 +259,31 @@ button:hover{
     }
 
 }
+
+/* =========================
+   DELETE BUTTON
+========================= */
+
+.delete-btn{
+
+    background:#dc2626;
+
+    color:white;
+
+    border:none;
+
+    padding:8px 15px;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.delete-btn:hover{
+
+    background:#b91c1c;
+
+}
