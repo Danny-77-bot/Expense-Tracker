@@ -1,30 +1,38 @@
 /* =========================
-   STEP 5 - DELETE TRANSACTIONS
+   STEP 6 - LOCAL STORAGE
 ========================= */
 
 // Form Elements
 
 const form = document.getElementById("transaction-form");
-
 const description = document.getElementById("description");
-
 const amount = document.getElementById("amount");
-
 const type = document.getElementById("type");
-
 const transactionList = document.getElementById("transaction-list");
 
-// Summary Cards
+// Summary Elements
 
 const balance = document.getElementById("balance");
-
 const income = document.getElementById("income");
-
 const expense = document.getElementById("expense");
 
-// Store Transactions
+// Load saved transactions
 
-const transactions = [];
+let transactions =
+JSON.parse(localStorage.getItem("transactions")) || [];
+
+// =========================
+// Save to Local Storage
+// =========================
+
+function saveTransactions(){
+
+    localStorage.setItem(
+        "transactions",
+        JSON.stringify(transactions)
+    );
+
+}
 
 // =========================
 // Update Summary
@@ -33,12 +41,11 @@ const transactions = [];
 function updateSummary(){
 
     let totalIncome = 0;
-
     let totalExpense = 0;
 
-    transactions.forEach(transaction => {
+    transactions.forEach(transaction=>{
 
-        if(transaction.type === "income"){
+        if(transaction.type==="income"){
 
             totalIncome += transaction.amount;
 
@@ -50,33 +57,74 @@ function updateSummary(){
 
     });
 
-    balance.textContent = "$" + (totalIncome - totalExpense).toFixed(2);
+    balance.textContent =
+    "$" + (totalIncome-totalExpense).toFixed(2);
 
-    income.textContent = "+$" + totalIncome.toFixed(2);
+    income.textContent =
+    "+$" + totalIncome.toFixed(2);
 
-    expense.textContent = "-$" + totalExpense.toFixed(2);
+    expense.textContent =
+    "-$" + totalExpense.toFixed(2);
 
 }
 
 // =========================
-// Delete Transaction
+// Display Transactions
 // =========================
 
-function deleteTransaction(index, listItem){
+function displayTransactions(){
 
-    transactions.splice(index, 1);
+    transactionList.innerHTML = "";
 
-    listItem.remove();
+    if(transactions.length===0){
 
-    if(transactions.length === 0){
+        transactionList.innerHTML =
+        `<li class="empty">
+            No transactions available.
+        </li>`;
 
-        transactionList.innerHTML = `
-            <li class="empty">
-                No transactions available.
-            </li>
-        `;
+        updateSummary();
+
+        return;
 
     }
+
+    transactions.forEach((transaction,index)=>{
+
+        const li =
+        document.createElement("li");
+
+        li.style.display="flex";
+        li.style.justifyContent="space-between";
+        li.style.alignItems="center";
+
+        li.innerHTML=`
+            <div>
+                <strong>${transaction.description}</strong><br>
+                <span style="color:${transaction.type==="income" ? "green":"red"}">
+                    ${transaction.type==="income" ? "+" : "-"}$${transaction.amount.toFixed(2)}
+                </span>
+            </div>
+
+            <button class="delete-btn">
+                Delete
+            </button>
+        `;
+
+        li.querySelector(".delete-btn")
+        .addEventListener("click",()=>{
+
+            transactions.splice(index,1);
+
+            saveTransactions();
+
+            displayTransactions();
+
+        });
+
+        transactionList.appendChild(li);
+
+    });
 
     updateSummary();
 
@@ -86,17 +134,17 @@ function deleteTransaction(index, listItem){
 // Add Transaction
 // =========================
 
-form.addEventListener("submit", function(event){
+form.addEventListener("submit",function(event){
 
     event.preventDefault();
 
-    const descriptionValue = description.value.trim();
+    const descriptionValue =
+    description.value.trim();
 
-    const amountValue = Number(amount.value);
+    const amountValue =
+    Number(amount.value);
 
-    const typeValue = type.value;
-
-    if(descriptionValue === "" || amountValue <= 0){
+    if(descriptionValue==="" || amountValue<=0){
 
         alert("Please enter valid information.");
 
@@ -104,61 +152,26 @@ form.addEventListener("submit", function(event){
 
     }
 
-    const empty = document.querySelector(".empty");
+    transactions.push({
 
-    if(empty){
+        description:descriptionValue,
 
-        empty.remove();
+        amount:amountValue,
 
-    }
-
-    const transaction = {
-
-        description: descriptionValue,
-
-        amount: amountValue,
-
-        type: typeValue
-
-    };
-
-    transactions.push(transaction);
-
-    const index = transactions.length - 1;
-
-    const li = document.createElement("li");
-
-    li.style.display = "flex";
-
-    li.style.justifyContent = "space-between";
-
-    li.style.alignItems = "center";
-
-    li.innerHTML = `
-        <div>
-            <strong>${descriptionValue}</strong><br>
-            <span style="color:${typeValue==="income" ? "green" : "red"}">
-                ${typeValue==="income" ? "+" : "-"}$${amountValue.toFixed(2)}
-            </span>
-        </div>
-
-        <button class="delete-btn">
-            Delete
-        </button>
-    `;
-
-    const deleteButton = li.querySelector(".delete-btn");
-
-    deleteButton.addEventListener("click", function(){
-
-        deleteTransaction(index, li);
+        type:type.value
 
     });
 
-    transactionList.appendChild(li);
+    saveTransactions();
 
-    updateSummary();
+    displayTransactions();
 
     form.reset();
 
 });
+
+// =========================
+// Initial Load
+// =========================
+
+displayTransactions();
