@@ -315,3 +315,52 @@ button:hover{
     background:#b91c1c;
 
 }
+/* =========================
+   FILTER BUTTONS
+========================= */
+
+.filter-buttons{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-bottom:20px;
+
+}
+
+.filter-btn{
+
+    flex:1;
+
+    padding:12px;
+
+    background:#e5e7eb;
+
+    color:#111827;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.filter-btn:hover{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+.filter-btn.active{
+
+    background:#2563eb;
+
+    color:white;
+
+}

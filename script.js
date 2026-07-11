@@ -11,6 +11,7 @@ const amount = document.getElementById("amount");
 const type = document.getElementById("type");
 
 const search = document.getElementById("search");
+const filterButtons =document.querySelectorAll(".filter-btn");
 
 const transactionList = document.getElementById("transaction-list");
 
@@ -80,6 +81,42 @@ function deleteTransaction(id){
     saveTransactions();
 
     displayTransactions(transactions);
+    filterButtons.forEach(button=>{
+
+    button.addEventListener("click",function(){
+
+        filterButtons.forEach(btn=>{
+
+            btn.classList.remove("active");
+
+        });
+
+        this.classList.add("active");
+
+        const filter = this.dataset.filter;
+
+        if(filter==="all"){
+
+            displayTransactions(transactions);
+
+        }
+
+        else{
+
+            const filtered =
+            transactions.filter(transaction=>{
+
+                return transaction.type===filter;
+
+            });
+
+            displayTransactions(filtered);
+
+        }
+
+    });
+
+});
 
     updateSummary();
 
