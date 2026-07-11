@@ -1,6 +1,6 @@
-/* =========================
-   STEP 7 - SEARCH TRANSACTIONS
-========================= */
+
+// HTML Elements
+// =========================
 
 const form = document.getElementById("transaction-form");
 
@@ -11,7 +11,8 @@ const amount = document.getElementById("amount");
 const type = document.getElementById("type");
 
 const search = document.getElementById("search");
-const filterButtons =document.querySelectorAll(".filter-btn");
+
+const filterButtons = document.querySelectorAll(".filter-btn");
 
 const transactionList = document.getElementById("transaction-list");
 
@@ -21,9 +22,17 @@ const income = document.getElementById("income");
 
 const expense = document.getElementById("expense");
 
+// =========================
+// Variables
+// =========================
+
 let transactions =
 JSON.parse(localStorage.getItem("transactions")) || [];
 
+let editingTransactionId = null;
+
+// =========================
+// Save Transactions
 // =========================
 
 function saveTransactions(){
@@ -38,6 +47,8 @@ function saveTransactions(){
 
 }
 
+// =========================
+// Update Summary
 // =========================
 
 function updateSummary(){
@@ -70,9 +81,15 @@ function updateSummary(){
     "-$"+totalExpense.toFixed(2);
 
 }
+
+// =========================
+// Delete Transaction
+// =========================
+
 function deleteTransaction(id){
 
-    transactions = transactions.filter(function(transaction){
+    transactions =
+    transactions.filter(function(transaction){
 
         return transaction.id !== id;
 
@@ -81,47 +98,13 @@ function deleteTransaction(id){
     saveTransactions();
 
     displayTransactions(transactions);
-    filterButtons.forEach(button=>{
-
-    button.addEventListener("click",function(){
-
-        filterButtons.forEach(btn=>{
-
-            btn.classList.remove("active");
-
-        });
-
-        this.classList.add("active");
-
-        const filter = this.dataset.filter;
-
-        if(filter==="all"){
-
-            displayTransactions(transactions);
-
-        }
-
-        else{
-
-            const filtered =
-            transactions.filter(transaction=>{
-
-                return transaction.type===filter;
-
-            });
-
-            displayTransactions(filtered);
-
-        }
-
-    });
-
-});
 
     updateSummary();
 
 }
 
+// =========================
+// Display Transactions
 // =========================
 
 function displayTransactions(list){
@@ -131,20 +114,23 @@ function displayTransactions(list){
     if(list.length === 0){
 
         transactionList.innerHTML = `
-            <li class="empty">
 
-                No transactions found.
+        <li class="empty">
 
-            </li>
+            No transactions found.
+
+        </li>
+
         `;
 
         return;
 
     }
 
-    list.forEach(transaction => {
+    list.forEach(transaction=>{
 
-        const li = document.createElement("li");
+        const li =
+        document.createElement("li");
 
         li.style.display = "flex";
 
@@ -153,30 +139,71 @@ function displayTransactions(list){
         li.style.alignItems = "center";
 
         li.innerHTML = `
-            <div>
 
-                <strong>${transaction.description}</strong><br>
+        <div>
 
-                <span style="color:${transaction.type==="income"?"green":"red"}">
+            <strong>
 
-                    ${transaction.type==="income"?"+":"-"}$${transaction.amount.toFixed(2)}
+                ${transaction.description}
 
-                </span>
+            </strong>
 
-            </div>
+            <br>
+
+            <span style="color:${transaction.type==="income" ? "green":"red"}">
+
+                ${transaction.type==="income" ? "+" : "-"}$${transaction.amount.toFixed(2)}
+
+            </span>
+
+        </div>
+
+        <div>
 
             <button
-                class="delete-btn"
-                data-id="${transaction.id}">
+                class="edit-btn">
+
+                Edit
+
+            </button>
+
+            <button
+                class="delete-btn">
 
                 Delete
 
             </button>
+
+        </div>
+
         `;
 
-        const button = li.querySelector(".delete-btn");
+        const editButton =
+        li.querySelector(".edit-btn");
 
-        button.addEventListener("click", function(){
+        editButton.addEventListener("click",function(){
+
+            description.value =
+            transaction.description;
+
+            amount.value =
+            transaction.amount;
+
+            type.value =
+            transaction.type;
+
+            editingTransactionId =
+            transaction.id;
+
+            form.querySelector("button").textContent =
+            "Update Transaction";
+
+        });
+
+        const deleteButton =
+        li.querySelector(".delete-btn");
+
+        deleteButton.addEventListener("click",function(){
 
             deleteTransaction(transaction.id);
 
@@ -189,18 +216,20 @@ function displayTransactions(list){
 }
 
 // =========================
+// Add / Update Transaction
+// =========================
 
-form.addEventListener("submit",function(event){
+form.addEventListener("submit", function(event){
 
     event.preventDefault();
 
-    const descriptionValue=
-    description.value.trim();
+    const descriptionValue = description.value.trim();
 
-    const amountValue=
-    Number(amount.value);
+    const amountValue = Number(amount.value);
 
-    if(descriptionValue===""||amountValue<=0){
+    const typeValue = type.value;
+
+    if(descriptionValue === "" || amountValue <= 0){
 
         alert("Please enter valid information.");
 
@@ -208,18 +237,55 @@ form.addEventListener("submit",function(event){
 
     }
 
-    
-transactions.push({
+    // =====================
+    // Update Existing Transaction
+    // =====================
 
-    id:Date.now(),
+    if(editingTransactionId !== null){
 
-    description:descriptionValue,
+        const transaction = transactions.find(function(item){
 
-    amount:amountValue,
+            return item.id === editingTransactionId;
 
-    type:type.value
+        });
 
-});
+        if(transaction){
+
+            transaction.description = descriptionValue;
+
+            transaction.amount = amountValue;
+
+            transaction.type = typeValue;
+
+        }
+
+        editingTransactionId = null;
+
+        form.querySelector("button").textContent =
+        "Add Transaction";
+
+    }
+
+    // =====================
+    // Add New Transaction
+    // =====================
+
+    else{
+
+        transactions.push({
+
+            id: Date.now(),
+
+            description: descriptionValue,
+
+            amount: amountValue,
+
+            type: typeValue
+
+        });
+
+    }
+
     saveTransactions();
 
     displayTransactions(transactions);
@@ -231,25 +297,71 @@ transactions.push({
 });
 
 // =========================
+// Search Transactions
+// =========================
 
-search.addEventListener("input",function(){
+search.addEventListener("input", function(){
 
-    const keyword=
-    search.value.toLowerCase();
-
-    const filtered=
-    transactions.filter(transaction=>
-
-        transaction.description
+    const keyword = search.value
         .toLowerCase()
-        .includes(keyword)
+        .trim();
 
-    );
+    const filtered = transactions.filter(function(transaction){
+
+        return transaction.description
+            .toLowerCase()
+            .includes(keyword);
+
+    });
 
     displayTransactions(filtered);
 
 });
 
+// =========================
+// Filter Buttons
+// =========================
+
+filterButtons.forEach(function(button){
+
+    button.addEventListener("click", function(){
+
+        // Remove active class
+
+        filterButtons.forEach(function(btn){
+
+            btn.classList.remove("active");
+
+        });
+
+        // Add active class
+
+        this.classList.add("active");
+
+        const filter = this.dataset.filter;
+
+        if(filter === "all"){
+
+            displayTransactions(transactions);
+
+            return;
+
+        }
+
+        const filtered = transactions.filter(function(transaction){
+
+            return transaction.type === filter;
+
+        });
+
+        displayTransactions(filtered);
+
+    });
+
+});
+
+// =========================
+// Initial Page Load
 // =========================
 
 displayTransactions(transactions);
