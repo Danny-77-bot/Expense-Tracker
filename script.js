@@ -1,46 +1,48 @@
 /* =========================
-   STEP 6 - LOCAL STORAGE
+   STEP 7 - SEARCH TRANSACTIONS
 ========================= */
 
-// Form Elements
-
 const form = document.getElementById("transaction-form");
+
 const description = document.getElementById("description");
+
 const amount = document.getElementById("amount");
+
 const type = document.getElementById("type");
+
+const search = document.getElementById("search");
+
 const transactionList = document.getElementById("transaction-list");
 
-// Summary Elements
-
 const balance = document.getElementById("balance");
-const income = document.getElementById("income");
-const expense = document.getElementById("expense");
 
-// Load saved transactions
+const income = document.getElementById("income");
+
+const expense = document.getElementById("expense");
 
 let transactions =
 JSON.parse(localStorage.getItem("transactions")) || [];
 
 // =========================
-// Save to Local Storage
-// =========================
 
 function saveTransactions(){
 
     localStorage.setItem(
+
         "transactions",
+
         JSON.stringify(transactions)
+
     );
 
 }
 
 // =========================
-// Update Summary
-// =========================
 
 function updateSummary(){
 
     let totalIncome = 0;
+
     let totalExpense = 0;
 
     transactions.forEach(transaction=>{
@@ -58,67 +60,88 @@ function updateSummary(){
     });
 
     balance.textContent =
-    "$" + (totalIncome-totalExpense).toFixed(2);
+    "$"+(totalIncome-totalExpense).toFixed(2);
 
     income.textContent =
-    "+$" + totalIncome.toFixed(2);
+    "+$"+totalIncome.toFixed(2);
 
     expense.textContent =
-    "-$" + totalExpense.toFixed(2);
+    "-$"+totalExpense.toFixed(2);
+
+}
+function deleteTransaction(id){
+
+    transactions = transactions.filter(function(transaction){
+
+        return transaction.id !== id;
+
+    });
+
+    saveTransactions();
+
+    displayTransactions(transactions);
+
+    updateSummary();
 
 }
 
 // =========================
-// Display Transactions
-// =========================
 
-function displayTransactions(){
+function displayTransactions(list){
 
     transactionList.innerHTML = "";
 
-    if(transactions.length===0){
+    if(list.length === 0){
 
-        transactionList.innerHTML =
-        `<li class="empty">
-            No transactions available.
-        </li>`;
+        transactionList.innerHTML = `
+            <li class="empty">
 
-        updateSummary();
+                No transactions found.
+
+            </li>
+        `;
 
         return;
 
     }
 
-    transactions.forEach((transaction,index)=>{
+    list.forEach(transaction => {
 
-        const li =
-        document.createElement("li");
+        const li = document.createElement("li");
 
-        li.style.display="flex";
-        li.style.justifyContent="space-between";
-        li.style.alignItems="center";
+        li.style.display = "flex";
 
-        li.innerHTML=`
+        li.style.justifyContent = "space-between";
+
+        li.style.alignItems = "center";
+
+        li.innerHTML = `
             <div>
+
                 <strong>${transaction.description}</strong><br>
-                <span style="color:${transaction.type==="income" ? "green":"red"}">
-                    ${transaction.type==="income" ? "+" : "-"}$${transaction.amount.toFixed(2)}
+
+                <span style="color:${transaction.type==="income"?"green":"red"}">
+
+                    ${transaction.type==="income"?"+":"-"}$${transaction.amount.toFixed(2)}
+
                 </span>
+
             </div>
 
-            <button class="delete-btn">
+            <button
+                class="delete-btn"
+                data-id="${transaction.id}">
+
                 Delete
+
             </button>
         `;
 
-        li.querySelector(".delete-btn")
-        .addEventListener("click",()=>{
+        const button = li.querySelector(".delete-btn");
 
-            transactions.splice(index,1);
+        button.addEventListener("click", function(){
 
-            saveTransactions();
-
-            displayTransactions();
+            deleteTransaction(transaction.id);
 
         });
 
@@ -126,25 +149,21 @@ function displayTransactions(){
 
     });
 
-    updateSummary();
-
 }
 
-// =========================
-// Add Transaction
 // =========================
 
 form.addEventListener("submit",function(event){
 
     event.preventDefault();
 
-    const descriptionValue =
+    const descriptionValue=
     description.value.trim();
 
-    const amountValue =
+    const amountValue=
     Number(amount.value);
 
-    if(descriptionValue==="" || amountValue<=0){
+    if(descriptionValue===""||amountValue<=0){
 
         alert("Please enter valid information.");
 
@@ -152,26 +171,50 @@ form.addEventListener("submit",function(event){
 
     }
 
-    transactions.push({
+    
+transactions.push({
 
-        description:descriptionValue,
+    id:Date.now(),
 
-        amount:amountValue,
+    description:descriptionValue,
 
-        type:type.value
+    amount:amountValue,
 
-    });
+    type:type.value
 
+});
     saveTransactions();
 
-    displayTransactions();
+    displayTransactions(transactions);
+
+    updateSummary();
 
     form.reset();
 
 });
 
 // =========================
-// Initial Load
+
+search.addEventListener("input",function(){
+
+    const keyword=
+    search.value.toLowerCase();
+
+    const filtered=
+    transactions.filter(transaction=>
+
+        transaction.description
+        .toLowerCase()
+        .includes(keyword)
+
+    );
+
+    displayTransactions(filtered);
+
+});
+
 // =========================
 
-displayTransactions();
+displayTransactions(transactions);
+
+updateSummary();

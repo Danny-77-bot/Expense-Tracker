@@ -198,6 +198,34 @@ header p{
 
 }
 
+/* =========================
+   SEARCH BAR
+========================= */
+
+#search{
+
+    width:100%;
+
+    padding:14px;
+
+    margin-bottom:20px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+}
+
+#search:focus{
+
+    outline:none;
+
+    border-color:#2563eb;
+
+}
+
 input,
 select{
 
