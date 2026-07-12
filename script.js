@@ -21,6 +21,9 @@ const balance = document.getElementById("balance");
 const income = document.getElementById("income");
 
 const expense = document.getElementById("expense");
+const chartCanvas = document.getElementById("expenseChart");
+
+let expenseChart;
 
 // =========================
 // Variables
@@ -44,6 +47,67 @@ function saveTransactions(){
         JSON.stringify(transactions)
 
     );
+
+}
+function updateChart(){
+
+    let totalIncome = 0;
+
+    let totalExpense = 0;
+
+    transactions.forEach(transaction=>{
+
+        if(transaction.type==="income"){
+
+            totalIncome += transaction.amount;
+
+        }else{
+
+            totalExpense += transaction.amount;
+
+        }
+
+    });
+
+    if(expenseChart){
+
+        expenseChart.destroy();
+
+    }
+
+    expenseChart = new Chart(chartCanvas,{
+
+        type:"doughnut",
+
+        data:{
+
+            labels:["Income","Expense"],
+
+            datasets:[{
+
+                data:[totalIncome,totalExpense]
+
+            }]
+
+        },
+
+        options:{
+
+            responsive:true,
+
+            plugins:{
+
+                legend:{
+
+                    position:"bottom"
+
+                }
+
+            }
+
+        }
+
+    });
 
 }
 
@@ -81,6 +145,7 @@ function updateSummary(){
     "-$"+totalExpense.toFixed(2);
 
 }
+updateChart();
 
 // =========================
 // Delete Transaction
