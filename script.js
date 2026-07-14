@@ -1,4 +1,9 @@
+/* ==========================================
+   EXPENSE TRACKER
+   Part 1 of 3
+========================================== */
 
+// =========================
 // HTML Elements
 // =========================
 
@@ -7,6 +12,8 @@ const form = document.getElementById("transaction-form");
 const description = document.getElementById("description");
 
 const amount = document.getElementById("amount");
+
+const date = document.getElementById("date");
 
 const type = document.getElementById("type");
 
@@ -21,13 +28,14 @@ const balance = document.getElementById("balance");
 const income = document.getElementById("income");
 
 const expense = document.getElementById("expense");
-const chartCanvas = document.getElementById("expenseChart");
 
-let expenseChart;
+const chartCanvas = document.getElementById("expenseChart");
 
 // =========================
 // Variables
 // =========================
+
+let expenseChart = null;
 
 let transactions =
 JSON.parse(localStorage.getItem("transactions")) || [];
@@ -49,15 +57,20 @@ function saveTransactions(){
     );
 
 }
+
+// =========================
+// Update Chart
+// =========================
+
 function updateChart(){
 
     let totalIncome = 0;
 
     let totalExpense = 0;
 
-    transactions.forEach(transaction=>{
+    transactions.forEach(function(transaction){
 
-        if(transaction.type==="income"){
+        if(transaction.type === "income"){
 
             totalIncome += transaction.amount;
 
@@ -121,9 +134,9 @@ function updateSummary(){
 
     let totalExpense = 0;
 
-    transactions.forEach(transaction=>{
+    transactions.forEach(function(transaction){
 
-        if(transaction.type==="income"){
+        if(transaction.type === "income"){
 
             totalIncome += transaction.amount;
 
@@ -136,16 +149,17 @@ function updateSummary(){
     });
 
     balance.textContent =
-    "$"+(totalIncome-totalExpense).toFixed(2);
+    "$" + (totalIncome - totalExpense).toFixed(2);
 
     income.textContent =
-    "+$"+totalIncome.toFixed(2);
+    "+$" + totalIncome.toFixed(2);
 
     expense.textContent =
-    "-$"+totalExpense.toFixed(2);
+    "-$" + totalExpense.toFixed(2);
+
+    updateChart();
 
 }
-updateChart();
 
 // =========================
 // Delete Transaction
@@ -153,8 +167,7 @@ updateChart();
 
 function deleteTransaction(id){
 
-    transactions =
-    transactions.filter(function(transaction){
+    transactions = transactions.filter(function(transaction){
 
         return transaction.id !== id;
 
@@ -192,10 +205,9 @@ function displayTransactions(list){
 
     }
 
-    list.forEach(transaction=>{
+    list.forEach(function(transaction){
 
-        const li =
-        document.createElement("li");
+        const li = document.createElement("li");
 
         li.style.display = "flex";
 
@@ -207,15 +219,11 @@ function displayTransactions(list){
 
         <div>
 
-            <strong>
+            <strong>${transaction.description}</strong><br>
 
-                ${transaction.description}
+            <small>${transaction.date || "No Date"}</small><br>
 
-            </strong>
-
-            <br>
-
-            <span style="color:${transaction.type==="income" ? "green":"red"}">
+            <span style="color:${transaction.type==="income" ? "green" : "red"}">
 
                 ${transaction.type==="income" ? "+" : "-"}$${transaction.amount.toFixed(2)}
 
@@ -225,15 +233,13 @@ function displayTransactions(list){
 
         <div>
 
-            <button
-                class="edit-btn">
+            <button class="edit-btn">
 
                 Edit
 
             </button>
 
-            <button
-                class="delete-btn">
+            <button class="delete-btn">
 
                 Delete
 
@@ -243,32 +249,28 @@ function displayTransactions(list){
 
         `;
 
-        const editButton =
-        li.querySelector(".edit-btn");
+        const editButton = li.querySelector(".edit-btn");
 
-        editButton.addEventListener("click",function(){
+        editButton.addEventListener("click", function(){
 
-            description.value =
-            transaction.description;
+            description.value = transaction.description;
 
-            amount.value =
-            transaction.amount;
+            amount.value = transaction.amount;
 
-            type.value =
-            transaction.type;
+            date.value = transaction.date || "";
 
-            editingTransactionId =
-            transaction.id;
+            type.value = transaction.type;
+
+            editingTransactionId = transaction.id;
 
             form.querySelector("button").textContent =
             "Update Transaction";
 
         });
 
-        const deleteButton =
-        li.querySelector(".delete-btn");
+        const deleteButton = li.querySelector(".delete-btn");
 
-        deleteButton.addEventListener("click",function(){
+        deleteButton.addEventListener("click", function(){
 
             deleteTransaction(transaction.id);
 
@@ -279,7 +281,6 @@ function displayTransactions(list){
     });
 
 }
-
 // =========================
 // Add / Update Transaction
 // =========================
@@ -292,9 +293,19 @@ form.addEventListener("submit", function(event){
 
     const amountValue = Number(amount.value);
 
+    const dateValue = date.value;
+
     const typeValue = type.value;
 
-    if(descriptionValue === "" || amountValue <= 0){
+    if(
+
+        descriptionValue === "" ||
+
+        amountValue <= 0 ||
+
+        dateValue === ""
+
+    ){
 
         alert("Please enter valid information.");
 
@@ -302,9 +313,9 @@ form.addEventListener("submit", function(event){
 
     }
 
-    // =====================
-    // Update Existing Transaction
-    // =====================
+    // =========================
+    // Edit Transaction
+    // =========================
 
     if(editingTransactionId !== null){
 
@@ -320,6 +331,8 @@ form.addEventListener("submit", function(event){
 
             transaction.amount = amountValue;
 
+            transaction.date = dateValue;
+
             transaction.type = typeValue;
 
         }
@@ -331,9 +344,9 @@ form.addEventListener("submit", function(event){
 
     }
 
-    // =====================
+    // =========================
     // Add New Transaction
-    // =====================
+    // =========================
 
     else{
 
@@ -344,6 +357,8 @@ form.addEventListener("submit", function(event){
             description: descriptionValue,
 
             amount: amountValue,
+
+            date: dateValue,
 
             type: typeValue
 
@@ -361,9 +376,10 @@ form.addEventListener("submit", function(event){
 
 });
 
-// =========================
-// Search Transactions
-// =========================
+
+/* ==========================================
+   Search Transactions
+========================================== */
 
 search.addEventListener("input", function(){
 
@@ -383,24 +399,22 @@ search.addEventListener("input", function(){
 
 });
 
-// =========================
-// Filter Buttons
-// =========================
+/* ==========================================
+   Filter Transactions
+========================================== */
 
 filterButtons.forEach(function(button){
 
     button.addEventListener("click", function(){
 
         // Remove active class
-
         filterButtons.forEach(function(btn){
 
             btn.classList.remove("active");
 
         });
 
-        // Add active class
-
+        // Highlight selected button
         this.classList.add("active");
 
         const filter = this.dataset.filter;
@@ -425,9 +439,9 @@ filterButtons.forEach(function(button){
 
 });
 
-// =========================
-// Initial Page Load
-// =========================
+/* ==========================================
+   Initial Page Load
+========================================== */
 
 displayTransactions(transactions);
 
